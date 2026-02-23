@@ -1,5 +1,82 @@
 [
   {
+    "slug": "chatgpt-ads-are-here",
+    "title": "ChatGPT Just Showed Its First Ads. Here's Why That Matters.",
+    "date": "2026-02-23",
+    "tags": [
+      "openai",
+      "chatgpt",
+      "ads",
+      "monetization",
+      "open-source"
+    ],
+    "author": "Cynthia",
+    "image": "/news/images/chatgpt-ads-are-here.webp",
+    "summary": "OpenAI has started serving ads inside ChatGPT responses — Expedia, Qualcomm, Best Buy. The honeymoon period is officially over. What this means for open alternatives.",
+    "source": "",
+    "sourceLabel": "",
+    "sources": [],
+    "html": "<p>The ads are in. Brands like Expedia, Qualcomm, and Best Buy are now appearing directly inside ChatGPT responses — sometimes triggering as early as your first prompt. OpenAI confirmed the rollout to Adweek, framing it as a natural evolution of their \"freemium\" model.</p>\n<p>The timing is deliberate. OpenAI is burning cash at an extraordinary rate — training runs, inference costs, datacenter bills — and a $157 billion valuation needs revenue that matches the hype. Ads are the oldest monetisation trick in the book.</p>\n<p>But let's be direct: <strong>ads fundamentally change the incentive structure of an AI assistant</strong>.</p>\n<p>When an advertiser pays to appear alongside an answer about \"best travel booking apps,\" the model's output is no longer neutral. Even if OpenAI insists the ads are clearly labelled, the pressure to keep advertisers happy creates distortions that compound over time. It's the same problem Google Search has been slowly dying from for a decade.</p>\n<p>This is the exact moment when the argument for open-source AI stops being ideological and starts being practical. When your assistant is commercially neutral — running locally, no accounts, no ad targeting — the outputs aren't shaped by whoever paid the most to be included in the context window.</p>\n<p>Tools like <a href=\"https://openclaw.ai\" target=\"_blank\" rel=\"noopener\">OpenClaw</a> route queries through open models via OpenRouter, with no advertising relationship between the response and any brand. You can run Qwen, Llama, or Mistral and the answer is just... the answer.</p>\n<p>The counterargument is that most users won't care. They didn't care about Google's ads either, and Google still has 90% of search market share. That might be true. But the users who <em>do</em> care — developers, researchers, anyone working with sensitive or commercial data — now have a concrete, practical reason to move elsewhere.</p>\n<p>ChatGPT was always going to become a media property eventually. It's happening faster than most expected. The question is whether the open ecosystem is ready to absorb the users who leave when it does.</p>\n<strong>The answer, increasingly, is yes.</strong>"
+  },
+  {
+    "slug": "local-image-gen-has-arrived",
+    "title": "Local AI Image Generation Has Arrived — and It's Genuinely Good",
+    "date": "2026-02-23",
+    "tags": [
+      "image-generation",
+      "flux",
+      "qwen",
+      "comfyui",
+      "local-ai",
+      "open-source"
+    ],
+    "author": "Cynthia",
+    "image": "/news/images/local-image-gen-has-arrived.webp",
+    "summary": "FLUX.1, Qwen Image Edit, SDXL running on your own hardware — no API key, no rate limits, no content policy. The local image generation stack is now good enough to replace cloud services for most use cases.",
+    "source": "",
+    "sourceLabel": "",
+    "sources": [],
+    "html": "<p>Something has quietly shifted in local AI image generation. It's no longer a hobbyist experiment that produces mediocre outputs. The 2025-2026 generation of open models — FLUX.1-schnell, Qwen Image Edit 2511, SDXL with its enormous LoRA ecosystem — are genuinely competitive with the commercial APIs, and running them locally is now practical for anyone with a modern GPU.</p>\n<strong>FLUX.1-schnell</strong> in fp8 quantisation generates sharp 1024×1024 images in under 10 seconds on mid-range hardware, and under 4 on high-end. That's within the same ballpark as Midjourney API latency, with zero rate limits, zero per-image cost, and zero content moderation constraints.\n<strong>Qwen Image Edit 2511</strong> is the more interesting story. The model — released by Alibaba's Qwen team — takes a source image and a natural language instruction (\"make the background a rainy street at night,\" \"remove the person on the left\") and executes the edit with a level of coherence that would have required Photoshop expertise six months ago. Running via ComfyUI with the QwenEditUtils custom nodes, the whole pipeline is self-contained.\n<p>The orchestration layer that makes this practical is ComfyUI. It's not pretty, but it's the most powerful local AI workflow system available: models compose together like Lego, custom nodes extend any capability gap, and the HTTP API makes it trivial to wire into your own applications.</p>\n<p>What this means practically:</p>\n<ul><li><strong>No API bills</strong> accumulating in the background as you iterate</li>\n<li><strong>No content policies</strong> triggering on legitimate creative work  </li>\n<li><strong>Full output ownership</strong> — nothing is uploaded, logged, or used for training</li>\n<li><strong>Composable pipelines</strong> — chain image gen into larger agentic workflows</li>\n</ul>\nThe tooling to orchestrate this through agents like OpenClaw is already mature. A local image generation server wrapping ComfyUI can expose an OpenAI-compatible <code>/v1/images/generations</code> endpoint — drop-in replacement for the cloud APIs in any agent workflow.\n<p>The remaining friction is hardware cost. A system capable of running FLUX.1 comfortably (24GB+ VRAM) still runs several thousand dollars. Nvidia's DGX Spark brings 128GB of unified memory into a compact form factor, which changes the equation for serious users.</p>\n<p>But even mid-range consumer cards (RTX 4070, 16GB) handle FLUX.1-schnell well. And the models are only getting more efficient as quantisation techniques mature — the gap between \"the biggest thing you can run locally\" and \"the best thing in the cloud\" is shrinking every quarter.</p>\n<p>The practical conclusion: if you're still paying per-image to a commercial API for most use cases, it's worth spending a weekend setting up local generation. The infrastructure is there. The models are there. The savings compound quickly.</p>"
+  },
+  {
+    "slug": "microsoft-gaming-no-ai-slop",
+    "title": "Microsoft's New Gaming CEO Just Said 'No AI Slop.' The Industry Should Listen.",
+    "date": "2026-02-23",
+    "tags": [
+      "microsoft",
+      "gaming",
+      "ai-ethics",
+      "creativity",
+      "open-source"
+    ],
+    "author": "Cynthia",
+    "image": "/news/images/microsoft-gaming-no-ai-slop.webp",
+    "summary": "Asha Sharma, taking over Xbox from Phil Spencer, said Microsoft Gaming won't \"flood our ecosystem with soulless AI slop.\" Blunt, correct, and worth amplifying.",
+    "source": "",
+    "sourceLabel": "",
+    "sources": [],
+    "html": "<p>In a memo that circulated this week, Asha Sharma — the new CEO of Microsoft Gaming after Phil Spencer's departure — said something that deserves to be heard across the entire AI industry:</p>\n<blockquote><em>\"We will not chase short-term efficiency or flood our ecosystem with soulless AI slop. Games are and always will be art, crafted by humans, and created with the most innovative technology provided by us.\"</em></blockquote>\n<p>This is remarkable for two reasons. First, it's honest. Most tech executives speak in the careful passive voice of shareholder communications. \"Soulless AI slop\" is a specific diagnosis, not a hedge.</p>\n<p>Second, it draws a distinction that most of the industry is still trying to blur: <strong>AI as a creative tool vs. AI as a replacement for creative judgement</strong>.</p>\n<p>The slop problem is real and it's getting worse. Since the barrier to generating plausible-looking content dropped to near zero, every incentive system that rewards volume over quality is now flooding outputs with the cheap version. Stock image libraries, news aggregators, marketing copy, mobile game assets — the marginal cost of content is collapsing, and the signal-to-noise ratio is collapsing with it.</p>\n<p>What Sharma is actually saying — even if she doesn't frame it this way — is that AI is only valuable when it amplifies human creative direction, not when it substitutes for having any direction at all. The difference between \"AI-assisted\" and \"AI-generated\" is human intent, human taste, and human responsibility for the output.</p>\n<p>This principle extends far beyond games. It's the operating logic behind any AI tool that's worth using long-term: <strong>the assistant should make the human more capable, not make the human optional</strong>.</p>\n<p>For the open-source AI community, this framing matters. The reason to invest in local models, controllable inference, and transparent pipelines isn't just privacy or cost — it's creative sovereignty. When you control the model, you control the direction. The output reflects your intent, not a training distribution shaped by someone else's engagement metrics.</p>\n<p>Microsoft Gaming probably won't fully live up to this memo. Corporate incentives are hard to resist. But naming the failure mode clearly is still useful — it gives everyone a vocabulary to call it out when it happens.</p>\n<p>No AI slop. It's a low bar. But right now, it's the right bar.</p>"
+  },
+  {
+    "slug": "nvidia-openai-deal-what-it-means",
+    "title": "Nvidia + OpenAI: When Your GPU Supplier Becomes Your Investor",
+    "date": "2026-02-23",
+    "tags": [
+      "nvidia",
+      "openai",
+      "investment",
+      "hardware",
+      "ai-infrastructure"
+    ],
+    "author": "Cynthia",
+    "image": "/news/images/nvidia-openai-deal-what-it-means.webp",
+    "summary": "Reports suggest Nvidia is closing in on a major investment in OpenAI. The two companies already have a deeply tangled relationship — this would make it official. And complicated.",
+    "source": "",
+    "sourceLabel": "",
+    "sources": [],
+    "html": "<p>Nvidia and OpenAI are reportedly closing in on a major investment deal. The details are still emerging, but the shape of it is significant: the company that builds the hardware that OpenAI trains on becoming a significant financial stakeholder in OpenAI itself.</p>\n<p>This is vertical integration in slow motion.</p>\n<p>Nvidia already makes enormous revenue from OpenAI's training and inference workloads. A data point: a single H100 cluster of 10,000 GPUs costs roughly $400M. OpenAI runs many of those. Every dollar OpenAI spends on compute goes straight to Nvidia's margin. An investment stake just closes the loop — Nvidia wins on hardware sales, and now wins if OpenAI's valuation holds.</p>\n<strong>The open-source reading of this is straightforward:</strong> concentrated ownership across the AI stack — training infrastructure, frontier models, and now capital — creates moats that are very hard to break. If you control the GPUs and you own equity in the major model lab, the barrier to competing with commodity hardware and open weights gets higher, not lower.\n<p>But there's a counter-narrative gaining traction. Qwen, Llama, Mistral, and DeepSeek are proving that you don't need Nvidia's absolute latest silicon at scale to build competitive models. AMD ROCm is maturing. Groq has its own inference chips. The Blackwell-class hardware accessible to indie labs and research groups (via DGX Spark, consumer GPUs, cloud spot instances) is more capable than the H100-class hardware that trained the original GPT-4.</p>\n<p>The consolidation at the top doesn't eliminate the open ecosystem — it sharpens the contrast with it.</p>\n<p>What it does do is make the political economy of AI messier. When your chip supplier is also your investor is also your competitor's funder, \"neutral infrastructure\" becomes a fiction. Developers choosing where to run their workloads are making alignment choices whether they intend to or not.</p>\n<p>Running on open weights, local hardware, or decentralised inference is increasingly a statement — and increasingly, a practical one.</p>"
+  },
+  {
     "slug": "npr-sues-google-ai-voice",
     "title": "NPR's David Greene Is Suing Google Over Its AI Podcast Voice",
     "date": "2026-02-15",
@@ -10,7 +87,7 @@
       "voice-ai"
     ],
     "author": "VibeClaw",
-    "image": "/news/npr-google-voice.png",
+    "image": "/news/npr-google-voice.webp",
     "summary": "The former Morning Edition host says Google's NotebookLM podcast voice is an 'uncanny' copy of his. The AI voice cloning debate arrives in court.",
     "source": "https://www.washingtonpost.com/technology/2026/02/15/david-greene-google-ai-podcast/",
     "sourceLabel": "Washington Post",
@@ -41,7 +118,7 @@
       "open-source"
     ],
     "author": "VibeClaw",
-    "image": "/news/phi-4-reasoning.png",
+    "image": "/news/phi-4-reasoning.webp",
     "summary": "At just 14B parameters, Phi-4 Reasoning punches way above its weight — and it's MIT licensed. No strings attached.",
     "source": "https://huggingface.co/microsoft",
     "sourceLabel": "HuggingFace",
@@ -71,7 +148,7 @@
       "industry"
     ],
     "author": "VibeClaw",
-    "image": "/news/spotify-vibe-coding.png",
+    "image": "/news/spotify-vibe-coding.webp",
     "summary": "Spotify's CEO revealed that the company's top engineers now only generate and supervise AI-written code. Welcome to the vibe coding era.",
     "source": "https://www.businessinsider.com/spotify-developers-not-writing-code-ai-2026-2",
     "sourceLabel": "Business Insider",
@@ -102,7 +179,7 @@
       "copyright"
     ],
     "author": "VibeClaw",
-    "image": "/news/disney-seedance.png",
+    "image": "/news/disney-seedance.webp",
     "summary": "Disney's sent a cease and desist over ByteDance's new Seedance 2.0 model generating Spider-Man and Darth Vader videos. The AI copyright wars heat up.",
     "source": "https://www.axios.com/2026/02/13/disney-bytedance-seedance",
     "sourceLabel": "Axios",
@@ -132,7 +209,7 @@
       "open-source"
     ],
     "author": "VibeClaw",
-    "image": "/news/llama-4-scout.png",
+    "image": "/news/llama-4-scout.webp",
     "summary": "Meta drops Llama 4 Scout with 10 million token context and 16 mixture-of-experts — and it runs on a single H100.",
     "source": "https://huggingface.co/meta-llama",
     "sourceLabel": "HuggingFace",
@@ -163,7 +240,7 @@
       "ethics"
     ],
     "author": "VibeClaw",
-    "image": "/news/openai-ads.png",
+    "image": "/news/openai-ads.webp",
     "summary": "An ex-OpenAI researcher publicly criticises the company's move to monetise ChatGPT with advertising. The implications for AI trust are serious.",
     "source": "https://www.nytimes.com/2026/02/11/opinion/openai-ads-chatgpt.html",
     "sourceLabel": "New York Times",
@@ -193,7 +270,7 @@
       "changelog"
     ],
     "author": "VibeClaw",
-    "image": "/news/openclaw-release.png",
+    "image": "/news/openclaw-release.webp",
     "summary": "The latest OpenClaw release brings Telegram polls, browser sandbox bind mounts, DM access controls, and a mountain of TUI fixes.",
     "source": "https://github.com/openclaw/openclaw/releases",
     "sourceLabel": "GitHub Releases",
@@ -224,7 +301,7 @@
       "open-source"
     ],
     "author": "VibeClaw",
-    "image": "/news/deepseek-r1.png",
+    "image": "/news/deepseek-r1.webp",
     "summary": "DeepSeek's R1 model matches or beats OpenAI's o3 on math and coding — and it's completely free.",
     "source": "https://huggingface.co/deepseek-ai",
     "sourceLabel": "HuggingFace",
@@ -255,7 +332,7 @@
       "wearables"
     ],
     "author": "VibeClaw",
-    "image": "/news/meta-glasses.png",
+    "image": "/news/meta-glasses.webp",
     "summary": "Meta's Ray-Ban smart glasses hit 7 million units sold, tripling combined 2023-2024 sales. AI wearables are no longer a niche.",
     "source": "https://finance.yahoo.com/quote/ESLOF/earnings/",
     "sourceLabel": "EssilorLuxottica Earnings",
@@ -286,7 +363,7 @@
       "automation"
     ],
     "author": "VibeClaw",
-    "image": "/news/suleyman-automation.png",
+    "image": "/news/suleyman-automation.webp",
     "summary": "Mustafa Suleyman claims AI will automate most desk jobs within 18 months. Bold prediction or hype? We break it down.",
     "source": "https://www.ft.com/content/f1ec830c-2f08-4b1a-b70f-7330f260753c",
     "sourceLabel": "Financial Times",
@@ -317,7 +394,7 @@
       "protocol"
     ],
     "author": "VibeClaw",
-    "image": "/news/mcp-protocol.png",
+    "image": "/news/mcp-protocol.webp",
     "summary": "Anthropic's Model Context Protocol is becoming the USB-C of AI agents. Here's what it is and why it matters.",
     "source": "https://modelcontextprotocol.io/",
     "sourceLabel": "MCP Specification",
@@ -348,7 +425,7 @@
       "tutorial"
     ],
     "author": "VibeClaw",
-    "image": "/news/openrouter-free.png",
+    "image": "/news/openrouter-free.webp",
     "summary": "OpenRouter gives you access to 20+ models for free. Here's what's actually usable, what the limits are, and where the catches hide.",
     "source": "https://openrouter.ai/models",
     "sourceLabel": "OpenRouter",
@@ -379,7 +456,7 @@
       "open-source"
     ],
     "author": "VibeClaw",
-    "image": "/news/qwen3-235b.png",
+    "image": "/news/qwen3-235b.webp",
     "summary": "Alibaba's Qwen3 family brings hybrid thinking — toggle between fast responses and deep reasoning. Eight models, all Apache 2.0.",
     "source": "https://qwenlm.github.io/blog/qwen3/",
     "sourceLabel": "Qwen Blog",
@@ -410,7 +487,7 @@
       "vibeclaw"
     ],
     "author": "VibeClaw",
-    "image": "/news/browser-agents.png",
+    "image": "/news/browser-agents.webp",
     "summary": "The next wave of AI isn't in the cloud — it's in your browser tab. Here's why that changes everything.",
     "source": "https://vibeclaw.dev",
     "sourceLabel": "VibeClaw Editorial",
@@ -441,7 +518,7 @@
       "vibeclaw"
     ],
     "author": "VibeClaw",
-    "image": "/news/devops-agent.png",
+    "image": "/news/devops-agent.webp",
     "summary": "Step-by-step: use VibeClaw's Forge to build an agent that monitors servers, checks logs, and alerts on failures. No coding required.",
     "source": "https://docs.openclaw.ai",
     "sourceLabel": "OpenClaw Docs",
@@ -471,7 +548,7 @@
       "comparison"
     ],
     "author": "VibeClaw",
-    "image": "/news/cost-of-ai.png",
+    "image": "/news/cost-of-ai.webp",
     "summary": "We crunched the numbers on running AI agents with free vs paid models. The gap is smaller than you think.",
     "source": "https://openrouter.ai/models",
     "sourceLabel": "OpenRouter",
@@ -501,7 +578,7 @@
       "open-source"
     ],
     "author": "VibeClaw",
-    "image": "/news/mistral-small.png",
+    "image": "/news/mistral-small.webp",
     "summary": "While everyone argues about Llama vs Qwen, Mistral quietly shipped a 24B model that's faster than both and Apache 2.0 licensed.",
     "source": "https://huggingface.co/mistralai",
     "sourceLabel": "HuggingFace",
@@ -532,7 +609,7 @@
       "tools"
     ],
     "author": "VibeClaw",
-    "image": "/news/openclaw-mcp-servers.png",
+    "image": "/news/openclaw-mcp-servers.webp",
     "summary": "OpenClaw supports MCP out of the box. Here are the 10 servers that make your agent genuinely useful.",
     "source": "https://github.com/modelcontextprotocol/servers",
     "sourceLabel": "MCP Server Registry",
@@ -562,7 +639,7 @@
       "open-source"
     ],
     "author": "VibeClaw",
-    "image": "/news/gemma-3.png",
+    "image": "/news/gemma-3.webp",
     "summary": "Everyone's watching Llama and Qwen. Meanwhile, Google's Gemma 3 quietly became the best small model you can run on consumer hardware.",
     "source": "https://huggingface.co/google/gemma-3-27b-it",
     "sourceLabel": "HuggingFace",
@@ -592,7 +669,7 @@
       "ecosystem"
     ],
     "author": "VibeClaw",
-    "image": "/news/openclaw-skills.png",
+    "image": "/news/openclaw-skills.webp",
     "summary": "OpenClaw's skill system is where it gets interesting. Here's a tour of what's available and how to find what you need.",
     "source": "https://clawhub.com",
     "sourceLabel": "ClawHub",
@@ -622,7 +699,7 @@
       "chatgpt"
     ],
     "author": "VibeClaw",
-    "image": "/news/openclaw-vs-chatgpt.png",
+    "image": "/news/openclaw-vs-chatgpt.webp",
     "summary": "ChatGPT is great. OpenClaw is different. Here's an honest comparison of when each one makes sense.",
     "source": "https://docs.openclaw.ai",
     "sourceLabel": "OpenClaw Docs",
@@ -652,7 +729,7 @@
       "getting-started"
     ],
     "author": "VibeClaw",
-    "image": "/news/openclaw-intro.png",
+    "image": "/news/openclaw-intro.webp",
     "summary": "A no-nonsense guide to OpenClaw — what it is, what it does, how it works, and why it's different from ChatGPT or Copilot.",
     "source": "https://docs.openclaw.ai",
     "sourceLabel": "OpenClaw Docs",

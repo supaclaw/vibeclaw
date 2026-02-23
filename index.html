@@ -1566,7 +1566,7 @@
         <ul class="nav-links" role="list">
           <li><a href="/explore.html">Explore</a></li>
           <li><a href="/create.html">Create</a></li>
-          <li class="nav-hide-mobile"><a href="/forge.html">Forge</a></li>
+          <!-- forge nav link hidden until ready <li class="nav-hide-mobile"><a href="/forge.html">Forge</a></li> -->
           <li class="nav-hide-mobile"><a href="/news.html">News</a></li>
           <li class="nav-hide-mobile"><a href="./docs/">Docs</a></li>
           <!-- <li><a href="/chat.html">Chat</a></li> -->
@@ -1606,7 +1606,7 @@
     <!-- Repo stats -->
     <div class="stats-bar">
       <!-- CA — left -->
-      <div class="stats-ca" id="stats-ca" onclick="(function(el){const addr='9vVfg81Qg7zHe2y9AZn39EjQShKiDR7S4ojbCoUrpump';navigator.clipboard.writeText(addr).catch(()=>{});const tip=el.querySelector('.stats-ca-copied');tip.classList.add('show');setTimeout(()=>tip.classList.remove('show'),1800);})(this)">
+      <div class="stats-ca" id="stats-ca" style="display:none" onclick="(function(el){const addr='9vVfg81Qg7zHe2y9AZn39EjQShKiDR7S4ojbCoUrpump';navigator.clipboard.writeText(addr).catch(()=>{});const tip=el.querySelector('.stats-ca-copied');tip.classList.add('show');setTimeout(()=>tip.classList.remove('show'),1800);})(this)">
         <span class="stats-ca-label">$VIBECLAW CA</span>
         <span class="stats-ca-addr">9vVfg81Qg7zHe2y9AZn39EjQShKiDR7S4ojbCoUrpump</span>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="width:11px;height:11px;opacity:0.5;flex-shrink:0;"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
@@ -2577,7 +2577,7 @@ entirely in a browser sandbox.
 
     <!-- Secondary CTAs — below playground -->
     <div style="display:flex;justify-content:center;gap:12px;padding:32px 20px 48px;flex-wrap:wrap;">
-      <a href="/forge.html" class="btn btn-secondary" style="display:inline-flex;align-items:center;gap:8px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg> Build Your Server</a>
+      <!-- forge btn hidden until ready -->
       <a href="#demos" class="btn btn-secondary">View Demos</a>
     </div>
 
@@ -2682,9 +2682,7 @@ entirely in a browser sandbox.
         </div>
 
         <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-          <a href="/forge.html" class="btn btn-primary" style="background:var(--accent);color:#000;border:1px solid var(--accent);display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-size:0.85rem;padding:12px 28px;text-decoration:none;">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg> Start Building
-          </a>
+          <!-- forge start building btn hidden until ready -->
         </div>
       </div>
     </div>

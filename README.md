@@ -6,7 +6,6 @@ Boot a full OpenClaw agent sandbox, chat with it, then click through to a real-t
 
 [![vibeclaw](https://img.shields.io/badge/🦀_vibeclaw-ff5c5c?style=for-the-badge&logoColor=white)](https://vibeclaw.dev)
 [![GitHub stars](https://img.shields.io/github/stars/jasonkneen/vibeclaw?style=for-the-badge&color=2a2a2a&labelColor=1a1a1a)](https://github.com/jasonkneen/vibeclaw/stargazers)
-[![License](https://img.shields.io/github/license/jasonkneen/vibeclaw?style=for-the-badge&color=2a2a2a&labelColor=1a1a1a)](LICENSE)
 
 **[🔗 vibeclaw.dev](https://vibeclaw.dev)** · **[𝕏 Community](https://x.com/vibeclaw)**
 

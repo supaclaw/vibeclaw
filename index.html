@@ -1689,7 +1689,7 @@
           </select>
           <div id="pg-flavour-chips" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;"></div>
           <select id="pg-model-select" style="display:none;">
-            <option value="upstage/solar-pro-3:free" selected>Solar Pro 3</option>
+            <option value="qwen/qwen3-8b:free" selected>Qwen3 8B</option>
           </select>
           <script>
             (function() {
@@ -2078,7 +2078,7 @@ entirely in a browser sandbox.
           { title: 'MCP protocol adopted by 50+ AI frameworks', source: 'Anthropic' },
           { title: 'AI coding agents now write 40% of new code at Google', source: 'Bloomberg' },
           { title: 'Qwen3 tops multilingual benchmarks across 119 languages', source: 'Alibaba' },
-          { title: 'Solar Pro 3 delivers GPT-4 quality at zero cost', source: 'Upstage' },
+          { title: 'Qwen3 8B delivers fast, capable responses at zero cost', source: 'Qwen' },
         ];
 
         let items = [];
@@ -2304,7 +2304,7 @@ entirely in a browser sandbox.
         // Build skills list from flavour
         const skillList = (fl.skills || []).map(s => ({ name: s.name, emoji: s.emoji, description: s.description, eligible: true, source: 'flavour' }));
         // Always include base skills
-        if (!skillList.find(s => s.name === 'chat')) skillList.unshift({ name: 'chat', emoji: '💬', description: 'Chat via OpenRouter (Solar Pro 3)', eligible: true, source: 'builtin' });
+        if (!skillList.find(s => s.name === 'chat')) skillList.unshift({ name: 'chat', emoji: '💬', description: 'Chat via OpenRouter (Qwen3 8B)', eligible: true, source: 'builtin' });
         if (!skillList.find(s => s.name === 'filesystem')) skillList.push({ name: 'filesystem', emoji: '📁', description: 'Virtual filesystem read/write', eligible: true, source: 'builtin' });
         if (!skillList.find(s => s.name === 'execute')) skillList.push({ name: 'execute', emoji: '⚡', description: 'Run commands in container', eligible: true, source: 'builtin' });
 
@@ -2382,7 +2382,7 @@ entirely in a browser sandbox.
               }});
             } else if (m === 'status') {
               ch.postMessage({ type: 'res', id, ok: true, payload: {
-                sessions: { count: agentList.length, defaults: { model: 'upstage/solar-pro-3:free' } },
+                sessions: { count: agentList.length, defaults: { model: 'qwen/qwen3-8b:free' } },
                 channelSummary: [],
                 heartbeat: { defaultAgentId: 'main' },
                 flavour: { id: fl.id, name: fl.name, emoji: fl.emoji }
@@ -2397,7 +2397,7 @@ entirely in a browser sandbox.
             } else if (m === 'skills.status' || m === 'skills.list') {
               ch.postMessage({ type: 'res', id, ok: true, payload: { skills: skillList }});
             } else if (m === 'models.list') {
-              ch.postMessage({ type: 'res', id, ok: true, payload: { models: [{ id: 'upstage/solar-pro-3:free', name: 'Solar Pro 3', active: true }] }});
+              ch.postMessage({ type: 'res', id, ok: true, payload: { models: [{ id: 'qwen/qwen3-8b:free', name: 'Qwen3 8B', active: true }] }});
             } else if (m === 'cron.list') {
               ch.postMessage({ type: 'res', id, ok: true, payload: { jobs: [] }});
             } else if (m === 'agents.files.list') {
@@ -2430,7 +2430,7 @@ entirely in a browser sandbox.
               fetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ messages: [{ role: 'system', content: sysPrompt }, ...window.__sandboxHistory], model: 'upstage/solar-pro-3:free' })
+                body: JSON.stringify({ messages: [{ role: 'system', content: sysPrompt }, ...window.__sandboxHistory], model: 'qwen/qwen3-8b:free' })
               }).then(r => r.json()).then(data => {
                 const text = data.choices?.[0]?.message?.content || data.error || 'No response';
                 window.__sandboxHistory.push({ role: 'assistant', content: text });
@@ -2473,7 +2473,7 @@ entirely in a browser sandbox.
 
         try {
           const model = modelSelect.value;
-          const isSolar = model.startsWith('upstage/solar');
+          const supportsReasoning = model.startsWith('qwen/qwen3') || model.startsWith('deepseek/deepseek-r1') || model.startsWith('microsoft/phi-4-reasoning');
           const payload = {
             model,
             max_tokens: 4096,
@@ -2483,8 +2483,8 @@ entirely in a browser sandbox.
               ...window.__sandboxHistory,
             ],
           };
-          // Enable reasoning for Solar Pro
-          if (isSolar) payload.reasoning = { enabled: true, effort: 'low' };
+          // Enable reasoning for models that support it (Qwen3, DeepSeek R1, Phi-4 Reasoning)
+          if (supportsReasoning) payload.reasoning = { enabled: true, effort: 'low' };
 
           const resp = await fetch('/api/chat', {
             method: 'POST',
@@ -2516,7 +2516,7 @@ entirely in a browser sandbox.
                 const choice = evt.choices?.[0];
                 if (!choice) continue;
 
-                // Handle reasoning content (Solar Pro)
+                // Handle reasoning content (Qwen3 / DeepSeek R1 / Phi-4)
                 const deltaReasoning = choice.delta?.reasoning;
                 if (deltaReasoning) {
                   reasoning += deltaReasoning;

@@ -200,7 +200,7 @@ new TinyClawWidget({
 
 ### Configuration options
 - `apiKey` — OpenRouter or direct Anthropic key
-- `model` — model string (default: upstage/solar-pro-3:free)
+- `model` — model string (default: qwen/qwen3-8b:free)
 - `webllmModel` — local WebGPU model (default: Qwen2.5-1.5B-Instruct-q4f16_1-MLC)
 - `preferLocal` — try WebGPU first (default: true)
 - `kb` — custom knowledge base markdown

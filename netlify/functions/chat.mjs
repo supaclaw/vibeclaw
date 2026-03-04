@@ -2,7 +2,7 @@ import pg from 'pg';
 const { Pool } = pg;
 
 const FREE_MODELS = new Set([
-  'upstage/solar-pro-3:free',
+  'qwen/qwen3-8b:free',
   'meta-llama/llama-3.1-8b-instruct:free',
   'google/gemma-3-4b-it:free',
   'qwen/qwen3-8b:free',
@@ -73,7 +73,7 @@ export default async (req) => {
     return new Response('Invalid JSON', { status: 400 });
   }
 
-  const model = parsed.model || 'upstage/solar-pro-3:free';
+  const model = parsed.model || 'qwen/qwen3-8b:free';
   parsed.model = model;
 
   // Free models — always allowed

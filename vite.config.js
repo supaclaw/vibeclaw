@@ -164,7 +164,6 @@ export default defineConfig({
 
         // Only models with :free suffix or in this allowlist
         const FREE_MODELS = new Set([
-          'upstage/solar-pro-3:free',
           'meta-llama/llama-3.1-8b-instruct:free',
           'meta-llama/llama-3.2-3b-instruct:free',
           'meta-llama/llama-3.2-1b-instruct:free',

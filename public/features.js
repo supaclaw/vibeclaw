@@ -68,7 +68,7 @@ const VibeclawFeatures = (() => {
     // Get list of models user can access
     getAvailableModels() {
       const freeModels = [
-        { id: 'upstage/solar-pro-3:free', name: 'Solar Pro 3', provider: 'Upstage', free: true },
+        { id: 'qwen/qwen3-8b:free', name: 'Qwen3 8B', provider: 'Qwen', free: true },
         { id: 'meta-llama/llama-3.1-8b-instruct:free', name: 'Llama 3.1 8B', provider: 'Meta', free: true },
         { id: 'google/gemma-3-4b-it:free', name: 'Gemma 3 4B', provider: 'Google', free: true },
         { id: 'qwen/qwen3-8b:free', name: 'Qwen3 8B', provider: 'Alibaba', free: true },

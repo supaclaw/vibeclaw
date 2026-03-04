@@ -178,7 +178,7 @@ describe('generateOpenClawConfig', () => {
     const spec = makeSpec();
     spec.runtime.model.model = '';
     const config = JSON.parse(generateOpenClawConfig(spec));
-    expect(config.agents.defaults.model.primary).toBe('upstage/solar-pro-3:free');
+    expect(config.agents.defaults.model.primary).toBe('qwen/qwen3-8b:free');
   });
 
   it('sets workspace path', () => {

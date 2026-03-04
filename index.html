@@ -1941,7 +1941,7 @@ entirely in a browser sandbox.
       let allFlavours = [];      // all available flavours
 
       // ── WebGPU local inference state (WebLLM/MLC — same as corner widget) ──
-      const WEBLLM_CDN   = 'https://esm.run/@mlc-ai/web-llm';
+      const WEBLLM_CDN   = 'https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@0.2.79/+esm';
       const WEBGPU_MODEL_ID = 'Qwen2.5-1.5B-Instruct-q4f16_1-MLC';
       let webgpuEngine = null;
       let webgpuLoadingPromise = null;
@@ -2166,12 +2166,19 @@ entirely in a browser sandbox.
           btn.appendChild(sub);
 
           btn.addEventListener('click', () => {
+            if (modelSelect.value === def.value) return; // already selected
             modelSelect.value = def.value;
             modelSelect.dispatchEvent(new Event('change'));
             modelChipsEl.querySelectorAll('.pg-model-chip').forEach(c => {
               c.classList.toggle('active', c === btn);
             });
             if (def.value === 'webgpu-local') startWebGPUPreload();
+            // If sandbox is running, restart it with new model
+            if (sandboxContainer) {
+              sandboxContainer = null;
+              window.__sandboxHistory = [];
+              launchSandbox();
+            }
           });
           modelChipsEl.appendChild(btn);
         });

@@ -1697,7 +1697,8 @@
           </select>
           <div id="pg-flavour-chips" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;"></div>
           <select id="pg-model-select" style="display:none;">
-            <option value="webgpu-local" selected>🦀 WebGPU Local (1.5B)</option>
+            <option value="webgpu-local">🦀 WebGPU Local (1.5B)</option>
+            <option value="google/gemma-3-27b-it:free" selected>Gemma 3 27B</option>
           </select>
           <script>
             (function() {
@@ -1878,11 +1879,6 @@ entirely in a browser sandbox.
 
     <script type="module">
       import { createContainer } from '/src/index.ts';
-      import {
-        pipeline,
-        TextStreamer,
-        InterruptableStoppingCriteria,
-      } from 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.0.0-next.3';
 
     (() => {
       const $ = id => document.getElementById(id);
@@ -2087,16 +2083,9 @@ entirely in a browser sandbox.
       }
       function disableBtns(v) { document.querySelectorAll('.pg-launch').forEach(b => b.disabled = v); }
 
-      // Start loading WebGPU model immediately on arrival
-      ensureWebGPUModel((pct, file) => {
-        const fname = (file || '').split('/').pop();
-        statusEl.textContent = `⬇️ WebGPU ${Math.round(pct)}% — ${fname}`;
-      }).then(() => {
-        statusEl.textContent = '✓ WebGPU model ready';
-        log('✓ WebGPU model loaded — ready for offline inference', 'ok');
-      }).catch(err => {
-        log('WebGPU load failed: ' + err.message, 'err');
-      });
+      // Persist model choice
+      try { const m = localStorage.getItem('oc-model'); if (m) modelSelect.value = m; } catch {}
+      modelSelect.addEventListener('change', () => { try { localStorage.setItem('oc-model', modelSelect.value); } catch {} });
 
       // Tab switching
       document.querySelectorAll('.pg-tab').forEach(tab => {
@@ -2526,42 +2515,39 @@ entirely in a browser sandbox.
 
         try {
           if (model === 'webgpu-local') {
-            // ── WebGPU local inference path ──
+            // ── WebGPU local inference path (MLC / web-llm) ──
             pgStreamEl.innerHTML = `<span class="t-ts">[${ts()}]</span><span style="color:var(--text-dim);">⬇️ Loading WebGPU model…</span>`;
             terminal.scrollTop = terminal.scrollHeight;
 
-            const gen = await ensureWebGPUModel((pct, file) => {
+            const engine = await ensureWebGPUModel((pct, file) => {
               const fname = (file || '').split('/').pop();
               pgStreamEl.innerHTML = `<span class="t-ts">[${ts()}]</span><span style="color:var(--text-dim);">⬇️ ${Math.round(pct)}% — ${fname}</span>`;
               terminal.scrollTop = terminal.scrollHeight;
             });
 
             pgStreamEl.innerHTML = `<span class="t-ts">[${ts()}]</span><span style="color:var(--accent);">🦀 </span>…`;
-            webgpuCriteria.reset();
             let outputText = '';
-
-            const streamer = new TextStreamer(gen.tokenizer, {
-              skip_prompt: true,
-              skip_special_tokens: true,
-              callback_function: (token) => {
-                outputText += token;
-                pgStreamEl.innerHTML = `<span class="t-ts">[${ts()}]</span><span style="color:var(--accent);">🦀 </span>` + md(outputText);
-                terminal.scrollTop = terminal.scrollHeight;
-              },
-            });
 
             const messages = [
               { role: 'system', content: (activeFlavour?.systemPrompt) || 'You are 🦀 Sandbox Agent, a helpful coding assistant running in a browser sandbox. Be concise and helpful.' },
               ...window.__sandboxHistory,
             ];
 
-            await gen(messages, {
-              max_new_tokens: 1024,
-              do_sample: true,
+            const stream = await engine.chat.completions.create({
+              messages,
+              max_tokens: 1024,
               temperature: 0.7,
-              streamer,
-              stopping_criteria: webgpuCriteria,
+              stream: true,
             });
+
+            for await (const chunk of stream) {
+              const delta = chunk.choices[0]?.delta?.content || '';
+              if (delta) {
+                outputText += delta;
+                pgStreamEl.innerHTML = `<span class="t-ts">[${ts()}]</span><span style="color:var(--accent);">🦀 </span>` + md(outputText);
+                terminal.scrollTop = terminal.scrollHeight;
+              }
+            }
 
             window.__sandboxHistory.push({ role: 'assistant', content: outputText });
 

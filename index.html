@@ -1100,6 +1100,17 @@
         margin-right: 6px;
       }
       .pg-terminal .t-log { color: #e8a888; text-shadow: 0 0 8px rgba(255,140,100,0.4); }
+      /* Onboarding sequence */
+      @keyframes ob-reveal {
+        from { opacity: 0; transform: translateY(5px); }
+        to   { opacity: 1; transform: translateY(0); }
+      }
+      .ob-line {
+        opacity: 0;
+        animation: ob-reveal 0.35s ease forwards;
+        line-height: 1.85;
+        white-space: pre;
+      }
       /* Chat formatting */
       .chat-chip {
         display: inline-flex;
@@ -1660,10 +1671,7 @@
       <h1>Run <span style="color:var(--accent);">Open</span><span style="color:var(--text-bright);">Claw</span> Securely in your browser in <span id="hero-time" style="display:inline-block;transition:opacity 0.4s ease, transform 0.4s ease;">5s</span></h1>
       <p class="subtitle">The world's first ONE CLICK deployment of a private, secure and instantly usable OpenClaw server.</p>
 
-      <div class="cta-row">
-        <button class="btn btn-primary pg-launch" data-action="sandbox" style="background:var(--accent);color:#000;border:1px solid var(--accent);display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;" aria-label="Boot your OpenClaw server now"><svg viewBox="0 0 24 24" fill="currentColor" style="width:14px;height:14px;" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"/></svg> Boot Server</button>
-        <!-- Build/Demos buttons moved below playground -->
-      </div>
+      <!-- Build/Demos buttons moved below playground -->
 
       </div>
       <div class="hero-visual">
@@ -1689,7 +1697,7 @@
           </select>
           <div id="pg-flavour-chips" style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;"></div>
           <select id="pg-model-select" style="display:none;">
-            <option value="google/gemma-3-27b-it:free" selected>Gemma 3 27B</option>
+            <option value="webgpu-local" selected>🦀 WebGPU Local (1.5B)</option>
           </select>
           <script>
             (function() {
@@ -1739,7 +1747,13 @@
               <a id="pg-connect-link" href="#" style="display:none;font-family:var(--mono);font-size:0.65rem;color:var(--accent);text-decoration:none;font-weight:700;"><svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" style="width:10px;height:10px;display:inline-block;vertical-align:0px;margin-right:2px;"><circle cx="12" cy="12" r="10"/></svg> Connect →</a>
             </div>
             <div class="pg-terminal" id="pg-terminal" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;">
-              <button class="pg-launch" data-action="sandbox" style="padding:16px 40px;font-family:var(--mono);font-size:1.1rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;background:var(--accent);color:#000;border:none;border-radius:10px;cursor:pointer;display:inline-flex;align-items:center;gap:10px;transition:background 0.15s,box-shadow 0.15s;" aria-label="Boot OpenClaw gateway" onmouseover="this.style.background='#ff7070';this.style.boxShadow='0 0 20px rgba(255,92,92,0.3)'" onmouseout="this.style.background='var(--accent)';this.style.boxShadow='none'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:18px;height:18px;" aria-hidden="true"><path d="M12 2v6M6.3 5.3a9 9 0 1 0 11.4 0"/></svg> Power On</button>
+              <!-- Onboarding sequence — shown on first load, replaced once boot starts -->
+              <div id="pg-onboarding" style="font-family:var(--mono);font-size:0.75rem;text-align:left;padding:18px 28px 8px;width:100%;max-width:460px;box-sizing:border-box;">
+                <div id="ob-lines"></div>
+                <div id="ob-boot-wrap" style="margin-top:24px;text-align:center;opacity:0;pointer-events:none;transition:opacity 0.6s ease;">
+                  <button class="pg-launch" data-action="sandbox" style="padding:16px 40px;font-family:var(--mono);font-size:1.1rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;background:var(--accent);color:#000;border:none;border-radius:10px;cursor:pointer;display:inline-flex;align-items:center;gap:10px;transition:background 0.15s,box-shadow 0.15s;" aria-label="Boot OpenClaw gateway" onmouseover="this.style.background='#ff7070';this.style.boxShadow='0 0 20px rgba(255,92,92,0.3)'" onmouseout="this.style.background='var(--accent)';this.style.boxShadow='none'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:18px;height:18px;" aria-hidden="true"><path d="M12 2v6M6.3 5.3a9 9 0 1 0 11.4 0"/></svg> Power On</button>
+                </div>
+              </div>
             </div>
 
             <div id="pg-chat-bar" style="display:none;border-top:1px solid var(--border);background:var(--surface);">
@@ -1864,6 +1878,11 @@ entirely in a browser sandbox.
 
     <script type="module">
       import { createContainer } from '/src/index.ts';
+      import {
+        pipeline,
+        TextStreamer,
+        InterruptableStoppingCriteria,
+      } from 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.0.0-next.3';
 
     (() => {
       const $ = id => document.getElementById(id);
@@ -1881,6 +1900,29 @@ entirely in a browser sandbox.
       let sandboxContainer = null;
       let activeFlavour = null;  // loaded flavour manifest
       let allFlavours = [];      // all available flavours
+
+      // ── WebGPU local inference state (WebLLM/MLC — same as corner widget) ──
+      const WEBLLM_CDN   = 'https://esm.run/@mlc-ai/web-llm';
+      const WEBGPU_MODEL_ID = 'Qwen2.5-1.5B-Instruct-q4f16_1-MLC';
+      let webgpuEngine = null;
+      let webgpuLoadingPromise = null;
+
+      async function ensureWebGPUModel(onProgress) {
+        if (webgpuEngine) return webgpuEngine;
+        if (webgpuLoadingPromise) return webgpuLoadingPromise;
+        webgpuLoadingPromise = (async () => {
+          if (!navigator.gpu) throw new Error('WebGPU not supported — try Chrome 113+ or enable chrome://flags/#enable-unsafe-webgpu');
+          const webllm = await import(/* @vite-ignore */ WEBLLM_CDN);
+          const engine = await webllm.CreateMLCEngine(WEBGPU_MODEL_ID, {
+            initProgressCallback: (p) => {
+              if (onProgress) onProgress(Math.round((p.progress || 0) * 100), p.text || '');
+            },
+          });
+          webgpuEngine = engine;
+          return engine;
+        })();
+        return webgpuLoadingPromise;
+      }
 
       // Load flavours
       (async () => {
@@ -2045,9 +2087,16 @@ entirely in a browser sandbox.
       }
       function disableBtns(v) { document.querySelectorAll('.pg-launch').forEach(b => b.disabled = v); }
 
-      // Persist model choice
-      try { const m = localStorage.getItem('oc-model'); if (m) modelSelect.value = m; } catch {}
-      modelSelect.addEventListener('change', () => { try { localStorage.setItem('oc-model', modelSelect.value); } catch {} });
+      // Start loading WebGPU model immediately on arrival
+      ensureWebGPUModel((pct, file) => {
+        const fname = (file || '').split('/').pop();
+        statusEl.textContent = `⬇️ WebGPU ${Math.round(pct)}% — ${fname}`;
+      }).then(() => {
+        statusEl.textContent = '✓ WebGPU model ready';
+        log('✓ WebGPU model loaded — ready for offline inference', 'ok');
+      }).catch(err => {
+        log('WebGPU load failed: ' + err.message, 'err');
+      });
 
       // Tab switching
       document.querySelectorAll('.pg-tab').forEach(tab => {
@@ -2186,6 +2235,7 @@ entirely in a browser sandbox.
         terminal.style.alignItems = '';
         terminal.style.justifyContent = '';
         chatBar.style.display = 'none';
+        modelSelect.style.display = 'none';
         statusEl.textContent = 'Booting…';
         disableBtns(true);
         flavourSelect.disabled = true;
@@ -2260,6 +2310,7 @@ entirely in a browser sandbox.
           if (led) { led.style.background='#4ade80'; led.style.boxShadow='0 0 6px #4ade80, 0 0 14px rgba(74,222,128,0.6)'; led.style.animationDuration='1.5s'; }
           if (powerLabel) { powerLabel.style.color='#4ade80'; powerLabel.style.textShadow='0 0 8px rgba(74,222,128,0.4)'; }
           chatBar.style.display = '';
+          modelSelect.style.display = '';
           chatInput.disabled = false;
           chatSend.disabled = false;
           flavourSelect.disabled = true;
@@ -2453,7 +2504,7 @@ entirely in a browser sandbox.
         log(`🔴 Gateway ready (${fl.emoji} ${fl.name}) — click Connect → to open dashboard`, 'ok');
       }
 
-      // ── Chat (direct Anthropic streaming) ──
+      // ── Chat ──
       async function sendChat() {
         const text = chatInput.value.trim();
         if (!text) return;
@@ -2471,84 +2522,123 @@ entirely in a browser sandbox.
         terminal.appendChild(pgStreamEl);
         terminal.scrollTop = terminal.scrollHeight;
 
+        const model = modelSelect.value;
+
         try {
-          const model = modelSelect.value;
-          const supportsReasoning = model.startsWith('qwen/qwen3') || model.startsWith('deepseek/deepseek-r1') || model.startsWith('microsoft/phi-4-reasoning');
-          const payload = {
-            model,
-            max_tokens: 4096,
-            stream: true,
-            messages: [
-              { role: 'system', content: (activeFlavour?.systemPrompt) || 'You are 🦀 Sandbox Agent, a helpful coding assistant running in a browser sandbox powered by OpenClaw + almostnode. Be concise and helpful.' },
+          if (model === 'webgpu-local') {
+            // ── WebGPU local inference path ──
+            pgStreamEl.innerHTML = `<span class="t-ts">[${ts()}]</span><span style="color:var(--text-dim);">⬇️ Loading WebGPU model…</span>`;
+            terminal.scrollTop = terminal.scrollHeight;
+
+            const gen = await ensureWebGPUModel((pct, file) => {
+              const fname = (file || '').split('/').pop();
+              pgStreamEl.innerHTML = `<span class="t-ts">[${ts()}]</span><span style="color:var(--text-dim);">⬇️ ${Math.round(pct)}% — ${fname}</span>`;
+              terminal.scrollTop = terminal.scrollHeight;
+            });
+
+            pgStreamEl.innerHTML = `<span class="t-ts">[${ts()}]</span><span style="color:var(--accent);">🦀 </span>…`;
+            webgpuCriteria.reset();
+            let outputText = '';
+
+            const streamer = new TextStreamer(gen.tokenizer, {
+              skip_prompt: true,
+              skip_special_tokens: true,
+              callback_function: (token) => {
+                outputText += token;
+                pgStreamEl.innerHTML = `<span class="t-ts">[${ts()}]</span><span style="color:var(--accent);">🦀 </span>` + md(outputText);
+                terminal.scrollTop = terminal.scrollHeight;
+              },
+            });
+
+            const messages = [
+              { role: 'system', content: (activeFlavour?.systemPrompt) || 'You are 🦀 Sandbox Agent, a helpful coding assistant running in a browser sandbox. Be concise and helpful.' },
               ...window.__sandboxHistory,
-            ],
-          };
-          // Enable reasoning for models that support it (Qwen3, DeepSeek R1, Phi-4 Reasoning)
-          if (supportsReasoning) payload.reasoning = { enabled: true, effort: 'low' };
+            ];
 
-          const resp = await fetch('/api/chat', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload),
-          });
+            await gen(messages, {
+              max_new_tokens: 1024,
+              do_sample: true,
+              temperature: 0.7,
+              streamer,
+              stopping_criteria: webgpuCriteria,
+            });
 
-          if (!resp.ok) {
-            const err = await resp.json().catch(() => ({}));
-            throw new Error(err?.error?.message || err?.error || `HTTP ${resp.status}`);
-          }
+            window.__sandboxHistory.push({ role: 'assistant', content: outputText });
 
-          const reader = resp.body.getReader();
-          const decoder = new TextDecoder();
-          let full = '', reasoning = '', buf = '', inReasoning = false;
+          } else {
+            // ── Remote API path ──
+            const supportsReasoning = model.startsWith('qwen/qwen3') || model.startsWith('deepseek/deepseek-r1') || model.startsWith('microsoft/phi-4-reasoning');
+            const payload = {
+              model,
+              max_tokens: 4096,
+              stream: true,
+              messages: [
+                { role: 'system', content: (activeFlavour?.systemPrompt) || 'You are 🦀 Sandbox Agent, a helpful coding assistant running in a browser sandbox powered by OpenClaw + almostnode. Be concise and helpful.' },
+                ...window.__sandboxHistory,
+              ],
+            };
+            if (supportsReasoning) payload.reasoning = { enabled: true, effort: 'low' };
 
-          while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
-            buf += decoder.decode(value, { stream: true });
-            const lines = buf.split('\n');
-            buf = lines.pop() || '';
-            for (const line of lines) {
-              if (!line.startsWith('data: ')) continue;
-              const data = line.slice(6).trim();
-              if (data === '[DONE]') continue;
-              try {
-                const evt = JSON.parse(data);
-                const choice = evt.choices?.[0];
-                if (!choice) continue;
+            const resp = await fetch('/api/chat', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload),
+            });
 
-                // Handle reasoning content (Qwen3 / DeepSeek R1 / Phi-4)
-                const deltaReasoning = choice.delta?.reasoning;
-                if (deltaReasoning) {
-                  reasoning += deltaReasoning;
-                  if (!inReasoning) {
-                    inReasoning = true;
-                    pgStreamEl.innerHTML = '<span class="t-ts">[' + ts() + ']</span><span style="color:var(--text-dim);">💭 thinking…</span>';
+            if (!resp.ok) {
+              const err = await resp.json().catch(() => ({}));
+              throw new Error(err?.error?.message || err?.error || `HTTP ${resp.status}`);
+            }
+
+            const reader = resp.body.getReader();
+            const decoder = new TextDecoder();
+            let full = '', reasoning = '', buf = '', inReasoning = false;
+
+            while (true) {
+              const { done, value } = await reader.read();
+              if (done) break;
+              buf += decoder.decode(value, { stream: true });
+              const lines = buf.split('\n');
+              buf = lines.pop() || '';
+              for (const line of lines) {
+                if (!line.startsWith('data: ')) continue;
+                const data = line.slice(6).trim();
+                if (data === '[DONE]') continue;
+                try {
+                  const evt = JSON.parse(data);
+                  const choice = evt.choices?.[0];
+                  if (!choice) continue;
+
+                  const deltaReasoning = choice.delta?.reasoning;
+                  if (deltaReasoning) {
+                    reasoning += deltaReasoning;
+                    if (!inReasoning) {
+                      inReasoning = true;
+                      pgStreamEl.innerHTML = `<span class="t-ts">[${ts()}]</span><span style="color:var(--text-dim);">💭 thinking…</span>`;
+                      terminal.scrollTop = terminal.scrollHeight;
+                    }
+                  }
+
+                  const delta = choice.delta?.content;
+                  if (delta) {
+                    if (inReasoning) { inReasoning = false; }
+                    full += delta;
+                    pgStreamEl.innerHTML = `<span class="t-ts">[${ts()}]</span><span style="color:var(--accent);">🦀 </span>` + md(full);
                     terminal.scrollTop = terminal.scrollHeight;
                   }
-                }
-
-                // Handle regular content
-                const delta = choice.delta?.content;
-                if (delta) {
-                  if (inReasoning) { inReasoning = false; }
-                  full += delta;
-                  pgStreamEl.innerHTML = '<span class="t-ts">[' + ts() + ']</span><span style="color:var(--accent);">🦀 </span>' + md(full);
-                  terminal.scrollTop = terminal.scrollHeight;
-                }
-              } catch {}
+                } catch {}
+              }
             }
-          }
 
-          // Preserve reasoning_details for multi-turn
-          const assistantMsg = { role: 'assistant', content: full };
-          if (reasoning) assistantMsg.reasoning_details = [{ type: 'text', text: reasoning }];
-          window.__sandboxHistory.push(assistantMsg);
+            const assistantMsg = { role: 'assistant', content: full };
+            if (reasoning) assistantMsg.reasoning_details = [{ type: 'text', text: reasoning }];
+            window.__sandboxHistory.push(assistantMsg);
+          }
         } catch (err) {
           log('Error: ' + err.message, 'err');
         }
         pgStreamEl = null;
         chatInput.disabled = false; chatSend.disabled = false; chatInput.focus();
-        // Safety: ensure re-enabled after 30s max
         clearTimeout(window.__chatUnlockTimer);
       }
 
@@ -2572,6 +2662,38 @@ entirely in a browser sandbox.
       document.querySelectorAll('.pg-launch').forEach(btn => {
         btn.addEventListener('click', launchSandbox);
       });
+
+      // ── Onboarding sequence ──────────────────────────────────────────
+      (function() {
+        const linesEl   = document.getElementById('ob-lines');
+        const bootWrap  = document.getElementById('ob-boot-wrap');
+        if (!linesEl || !bootWrap) return;
+
+        const LINES = [
+          { text: '> Initialising VibeClaw…',                  cls: 't-info', delay: 500  },
+          { text: '✓  WebAssembly sandbox ready',               cls: 't-ok',   delay: 1200 },
+          { text: '✓  Your API key never leaves this tab',      cls: 't-ok',   delay: 2000 },
+          { text: '✓  No server · No logs · No tracking',       cls: 't-ok',   delay: 2800 },
+          { text: '✓  OpenClaw — open-source, AGPL-3.0',        cls: 't-ok',   delay: 3600 },
+          { text: '> All systems go.',                           cls: 't-log',  delay: 4400 },
+        ];
+
+        LINES.forEach(({ text, cls, delay }) => {
+          setTimeout(() => {
+            const d = document.createElement('div');
+            d.className = 'ob-line ' + cls;
+            d.textContent = text;
+            linesEl.appendChild(d);
+          }, delay);
+        });
+
+        // Reveal boot button after sequence completes
+        setTimeout(() => {
+          bootWrap.style.opacity       = '1';
+          bootWrap.style.pointerEvents = 'auto';
+        }, 5200);
+      })();
+      // ────────────────────────────────────────────────────────────────
     })();
     </script>
 
@@ -2644,8 +2766,8 @@ entirely in a browser sandbox.
           <div class="feature-icon">
             <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
           </div>
-          <h3>WebGPU Local LLM <span style="font-size:0.6rem;opacity:0.4;">(coming soon)</span></h3>
-          <p>Run Qwen2.5-Coder 1.5B locally via WebGPU — no API key, no network. A fully self-contained coding agent in ~900MB.</p>
+          <h3>WebGPU Local LLM</h3>
+          <p>Run Qwen2.5-Coder 1.5B locally via WebGPU — no API key, no network. Pick <strong>🦀 WebGPU Local</strong> in the model selector. ~900MB download, then fully offline.</p>
         </div>
 
       </div>
@@ -2877,7 +2999,7 @@ entirely in a browser sandbox.
 
         <details class="faq-item">
           <summary>What about WebGPU / local models?</summary>
-          <div class="faq-answer">Coming soon. We're integrating <a href="https://github.com/mlc-ai/web-llm">WebLLM</a> to run <strong>Qwen2.5-Coder 1.5B</strong> (4-bit quantized, ~900MB) entirely via WebGPU compute shaders. One download, then fully offline — no API key, no network. The almostnode container runtime is ready, we're wiring up the inference engine.</div>
+          <div class="faq-answer">Now available! Select <strong>🦀 WebGPU Local (1.5B)</strong> in the model picker. It uses <a href="https://huggingface.co/onnx-community/qwen2.5-coder-1.5b-ONNX">Qwen2.5-Coder 1.5B</a> (4-bit quantized, ~900MB) running entirely via WebGPU compute shaders in your browser — no API key, no network after the first download. Requires Chrome 113+ or a WebGPU-enabled browser.</div>
         </details>
 
         <details class="faq-item">
